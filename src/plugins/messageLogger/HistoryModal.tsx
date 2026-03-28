@@ -15,7 +15,7 @@ import { ModalCloseButton, ModalContent, ModalHeader, ModalProps, ModalRoot, Mod
 import { findCssClassesLazy } from "@webpack";
 import { TabBar, Timestamp, useState } from "@webpack/common";
 
-import { parseEditContent } from ".";
+import { parseEditContent, settings } from ".";
 
 const CodeContainerClasses = findCssClassesLazy("markup", "codeContainer");
 const MiscClasses = findCssClassesLazy("messageContent", "markupRtl");
@@ -35,7 +35,7 @@ export function openHistoryModal(message: any) {
 
 export function HistoryModal({ modalProps, message }: { modalProps: ModalProps; message: any; }) {
     const [currentTab, setCurrentTab] = useState(message.editHistory.length);
-    const [showDiff, setShowDiff] = useState(true);
+    const [showDiff, setShowDiff] = useState(settings.store.showEditDiffs);
     const timestamps = [message.firstEditTimestamp, ...message.editHistory.map(m => m.timestamp)];
     const contents = [...message.editHistory.map(m => m.content), message.content];
 
@@ -89,7 +89,7 @@ export function HistoryModal({ modalProps, message }: { modalProps: ModalProps; 
                 </TabBar>
 
                 <div className={classes(CodeContainerClasses.markup, MiscClasses.messageContent, Margins.top20)}>
-                    {showDiff ? parseEditContent(contents[currentTab], message, currentTab === contents.length - 1 ? undefined : contents[contents.length - 1]) : contents[currentTab]}
+                    {parseEditContent(contents[currentTab], message, showDiff ? currentTab === contents.length - 1 ? undefined : contents[contents.length - 1] : undefined)}
                 </div>
             </ModalContent>
         </ModalRoot>
